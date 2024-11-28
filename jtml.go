@@ -33,30 +33,41 @@ func convertToHTML(input any, config Config) ([]string, error) {
 	lines := strings.Split(jsonString, "\n")
 	result := make([]string, 0)
 
+	var bracketColor, textColor, numberPrefixColor string
+	if config.IsDark {
+		bracketColor = "#cbd5e1"
+		numberPrefixColor = "#cbd5e1"
+		textColor = "#86efac"
+	} else {
+		bracketColor = "#111827"
+		textColor = "#047857"
+		numberPrefixColor = "#111827"
+	}
+
 	for _, line := range lines {
 
 		if isBracket(line) {
-			newLine := "<div class='bracket' style='color: #15803d'>" + line + "</div>"
+			newLine := "<div class='bracket' style='color:" + bracketColor + "'>" + line + "</div>"
 			result = append(result, newLine)
 			continue
 		}
 
-		newLine := "<div class='text' style='color: #15803d'>" + line + "</div>"
+		newLine := "<div class='text' style='color: " + textColor + "'>" + line + "</div>"
 		result = append(result, newLine)
 	}
 
 	if config.HasNumberPrefix {
-		result = appendNumberPrefix(result)
+		result = appendNumberPrefix(result, numberPrefixColor)
 	}
 
 	return result, nil
 }
 
-func appendNumberPrefix(list []string) []string {
+func appendNumberPrefix(list []string, numberPrefixColor string) []string {
 	numberResult := make([]string, 0)
 
 	for index, line := range list {
-		newLine := "<div style='display: flex; flex-direction: row'>" + "<div class='text' style='color: #b91c1c; margin-right: 2em'>" + strconv.Itoa(index+1) + "</div>" + line + "</div>"
+		newLine := "<div style='display: flex; flex-direction: row'>" + "<div class='text' style='color: " + numberPrefixColor + "; margin-right: 2em'>" + strconv.Itoa(index+1) + "</div>" + line + "</div>"
 		numberResult = append(numberResult, newLine)
 	}
 
